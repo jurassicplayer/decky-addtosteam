@@ -1,105 +1,81 @@
 import {
   ButtonItem,
   definePlugin,
-  DialogButton,
-  Menu,
-  MenuItem,
+  Navigation,
   PanelSection,
   PanelSectionRow,
-  Router,
   ServerAPI,
-  showContextMenu,
   staticClasses,
+  ToastData,
 } from "decky-frontend-lib";
-import { VFC } from "react";
-import { FaShip } from "react-icons/fa";
+import { useEffect, useState, VFC } from "react";
+import { MdSwitchAccessShortcutAdd } from "react-icons/md";
 
-import logo from "../assets/logo.png";
-
-// interface AddMethodArgs {
-//   left: number;
-//   right: number;
-// }
-
-const Content: VFC<{ serverAPI: ServerAPI }> = ({}) => {
-  // const [result, setResult] = useState<number | undefined>();
-
-  // const onClick = async () => {
-  //   const result = await serverAPI.callPluginMethod<AddMethodArgs, number>(
-  //     "add",
-  //     {
-  //       left: 2,
-  //       right: 2,
-  //     }
-  //   );
-  //   if (result.success) {
-  //     setResult(result.result);
-  //   }
-  // };
+const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
+  const [lastUsedPath, setLastUsedPath] = useState<string>('')
+  useEffect(()=>{
+    onInit()
+  },[])
+  const onInit = async () => {
+    let lastUsedPath = localStorage.getItem('decky-addtosteam')
+    let deckyUserHome = (await serverAPI.callPluginMethod('getDeckyUserHome', {})).result
+    let path = lastUsedPath || deckyUserHome
+    // @ts-ignore
+    setLastUsedPath(path)
+  }
+  const onClick = async () => {
+    Navigation.CloseSideMenus()
+    serverAPI.openFilePicker(
+      lastUsedPath,
+      true
+    ).then((selection) => {
+      if (!selection.realpath) { return }
+      let file = selection.realpath.split(/[\\\/]/).pop()
+      let filename = file ? file.split('.').shift() : undefined
+      let path = selection.realpath.substring(0, selection.realpath.length - (file ? file.length : 0))
+      setLastUsedPath(path)
+      localStorage.setItem('decky-addtosteam', path)
+      if (!file && !filename) {
+        console.log(`Couldn't figure out filename for ${selection.realpath}`)
+        return
+      } 
+      let appName = filename
+      let execPath = selection.realpath
+      let toastData: ToastData = {
+        title: 'Added Shortcut',
+        body: file,
+        playSound: true,
+        showToast: true
+      }
+      SteamClient.Apps.AddShortcut(appName, execPath, "", "")
+      serverAPI.toaster.toast(toastData)
+    }).catch((err) => {
+      if (err == "User canceled") { return }
+      console.log(err)
+    })
+  }
 
   return (
     <PanelSection title="Panel Section">
       <PanelSectionRow>
         <ButtonItem
           layout="below"
-          onClick={(e) =>
-            showContextMenu(
-              <Menu label="Menu" cancelText="CAAAANCEL" onCancel={() => {}}>
-                <MenuItem onSelected={() => {}}>Item #1</MenuItem>
-                <MenuItem onSelected={() => {}}>Item #2</MenuItem>
-                <MenuItem onSelected={() => {}}>Item #3</MenuItem>
-              </Menu>,
-              e.currentTarget ?? window
-            )
-          }
+          onClick={onClick}
         >
-          Server says yolo
-        </ButtonItem>
-      </PanelSectionRow>
-
-      <PanelSectionRow>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <img src={logo} />
-        </div>
-      </PanelSectionRow>
-
-      <PanelSectionRow>
-        <ButtonItem
-          layout="below"
-          onClick={() => {
-            Router.CloseSideMenus();
-            Router.Navigate("/decky-plugin-test");
-          }}
-        >
-          Router
+          Add a Shortcut
         </ButtonItem>
       </PanelSectionRow>
     </PanelSection>
   );
 };
 
-const DeckyPluginRouterTest: VFC = () => {
-  return (
-    <div style={{ marginTop: "50px", color: "white" }}>
-      Hello World!
-      <DialogButton onClick={() => Router.NavigateToLibraryTab()}>
-        Go to Library
-      </DialogButton>
-    </div>
-  );
-};
 
 export default definePlugin((serverApi: ServerAPI) => {
-  serverApi.routerHook.addRoute("/decky-plugin-test", DeckyPluginRouterTest, {
-    exact: true,
-  });
-
   return {
-    title: <div className={staticClasses.Title}>Example Plugin</div>,
+    title: <div className={staticClasses.Title}>Add to Steam</div>,
     content: <Content serverAPI={serverApi} />,
-    icon: <FaShip />,
+    icon: <MdSwitchAccessShortcutAdd />,
     onDismount() {
-      serverApi.routerHook.removeRoute("/decky-plugin-test");
     },
   };
 });
