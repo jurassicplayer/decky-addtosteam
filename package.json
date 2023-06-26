@@ -1,7 +1,7 @@
 {
-  "name": "decky-plugin-template",
+  "name": "decky-addtosteam",
   "version": "0.0.1",
-  "description": "A template to quickly create decky plugins from scratch, based on TypeScript and webpack",
+  "description": "A simple plugin to add Steam shortcuts to files from GameMode",
   "scripts": {
     "build": "shx rm -rf dist && rollup -c",
     "watch": "rollup -c -w",
@@ -29,18 +29,18 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-replace": "^4.0.0",
-    "@rollup/plugin-typescript": "^8.3.3",
+    "@rollup/plugin-typescript": "^8.5.0",
     "@types/react": "16.14.0",
-    "@types/webpack": "^5.28.0",
-    "rollup": "^2.77.1",
+    "@types/webpack": "^5.28.1",
+    "rollup": "^2.79.1",
     "rollup-plugin-import-assets": "^1.1.1",
     "shx": "^0.3.4",
-    "tslib": "^2.4.0",
-    "typescript": "^4.7.4"
+    "tslib": "^2.5.3",
+    "typescript": "^4.9.5"
   },
   "dependencies": {
-    "decky-frontend-lib": "^3.21.1",
-    "react-icons": "^4.4.0"
+    "decky-frontend-lib": "^3.21.7",
+    "react-icons": "^4.10.1"
   },
   "pnpm": {
     "peerDependencyRules": {
