@@ -9,10 +9,10 @@ import {
   staticClasses,
   ToastData,
   
-} from "decky-frontend-lib";
-import { useEffect, useState, VFC } from "react";
-import { MdSwitchAccessShortcutAdd } from "react-icons/md";
-import { SteamAppDetails } from "./interface";
+} from "decky-frontend-lib"
+import { useEffect, useState, VFC } from "react"
+import { MdSwitchAccessShortcutAdd } from "react-icons/md"
+import { SteamAppDetails } from "./interface"
 
 async function getAppDetails(appID:number): Promise<SteamAppDetails|null> {
   return new Promise((resolve) => {
@@ -116,9 +116,8 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
         </ButtonItem>
       </PanelSectionRow>
     </PanelSection>
-  );
-};
-
+  )
+}
 
 export default definePlugin((serverApi: ServerAPI) => {
   return {
@@ -127,5 +126,5 @@ export default definePlugin((serverApi: ServerAPI) => {
     icon: <MdSwitchAccessShortcutAdd />,
     onDismount() {
     },
-  };
-});
+  }
+})
