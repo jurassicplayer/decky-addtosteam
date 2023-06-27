@@ -1,6 +1,6 @@
 {
   "name": "decky-addtosteam",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A simple plugin to add Steam shortcuts to files from GameMode",
   "scripts": {
     "build": "shx rm -rf dist && rollup -c",
