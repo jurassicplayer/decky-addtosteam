@@ -6,8 +6,13 @@ import {
   PanelSection,
   PanelSectionRow,
   ServerAPI,
+  showModal,
+  ConfirmModal,
   staticClasses,
   ToastData,
+  TextField,
+  DropdownItem,
+  SingleDropdownOption,
   
 } from "decky-frontend-lib"
 import { useEffect, useState, VFC } from "react"
@@ -38,6 +43,74 @@ async function addShortcut(appName: string, execPath: string): Promise<{failed: 
   })
 }
 
+const ShortcutOptionsModal = (props: {closeModal?: CallableFunction, appID: number, appName: string, serverAPI: ServerAPI}) => {
+  const { appID, serverAPI } = props
+  let createShortcut = false
+  const [shortcutName, setShortcutName] = useState<string>(props.appName)
+  const [compatTools, setCompatTools] = useState<{data: string, label: string}[]>([])
+  const [compatTool, setCompatTool] = useState<SingleDropdownOption>({data:'', label: 'None'})
+  useEffect(() => {
+    let getData = async () => {
+      let appDetails = await getAppDetails(appID)
+      let availableCompatTools:{strToolName: string, strDisplayName: string}[] = await SteamClient.Apps.GetAvailableCompatTools(appID)
+      return {
+        appDetails: appDetails,
+        compatTools: availableCompatTools.map(
+          ({strToolName, strDisplayName}) => { return {data: strToolName, label: strDisplayName} }
+        )
+      }
+    }
+    getData().then((data) => {
+      data.compatTools.unshift({data:'', label: 'None'})
+      setCompatTools(data.compatTools)
+      if (data.appDetails) {
+        let filepath = data.appDetails.strDisplayName.split('.')
+        let fileext = filepath.pop()?.toLowerCase()
+        if (fileext && ['exe', 'bat', 'ps1'].includes(fileext) && data.compatTools.length > 1) {
+          setCompatTool(data.compatTools[1])
+        }
+      }
+    })
+  }, [])
+  
+  const closeModal = () => {
+    if (!createShortcut) { SteamClient.Apps.RemoveShortcut(appID) }
+    if (props.closeModal) { props.closeModal() }
+  }
+  const onCreateShortcut = async () => {
+    createShortcut = true
+    SteamClient.Apps.SetShortcutName(appID, shortcutName)
+    SteamClient.Apps.SpecifyCompatTool(appID, compatTool.data)
+    let toastData: ToastData = {
+      title: 'Added Shortcut',
+      body: shortcutName,
+      playSound: true,
+      showToast: true
+    }
+    serverAPI.toaster.toast(toastData)
+  }
+  return (
+    <ConfirmModal
+      strTitle='Shortcut Options'
+      strOKButtonText='Create'
+      closeModal={closeModal}
+      onOK={onCreateShortcut}
+      onCancel={closeModal}
+      onEscKeypress={closeModal}>
+        <TextField
+          label='Title'
+          focusOnMount={true}
+          value={shortcutName}
+          onChange={(e) => setShortcutName(e.currentTarget.value)} />
+        <DropdownItem
+          label='Compatibility Tool'
+          rgOptions={compatTools}
+          selectedOption={compatTool.data}
+          onChange={(e) => setCompatTool(e)}/>
+    </ConfirmModal>
+  )
+}
+
 const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
   const [lastUsedPath, setLastUsedPath] = useState<string>('')
   useEffect(()=>{
@@ -63,16 +136,17 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
       true
     )
     if (!filepath) { return }
+
     // @ts-ignore
-    let file = filepath.realpath.split(/[\\\/]/).pop()
+    const file:string = filepath.realpath.split(/[\\\/]/).pop()
     let filename = file
     if (file) {
       let newfilename = file.split('.')
       newfilename.pop()
       filename = newfilename.join('.')
     }
+    
     let path = filepath.realpath.substring(0, filepath.realpath.length - (file ? file.length : 0))
-    setLastUsedPath(path)
     localStorage.setItem('decky-addtosteam', path)
     let appName = filename || file || ''
     let execPath = filepath.realpath
@@ -89,18 +163,16 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
     }
     shortcutsFailed.forEach((appID) => { SteamClient.Apps.RemoveShortcut(appID) })
     console.log(`Add shortcut result (attempts ${attempts}): `, shortcutAdded.success)
-    let toastData: ToastData = {
-      title: '',
-      body: file,
-      playSound: true,
-      showToast: true
-    }
     if (shortcutAdded.success) {
-      toastData.title = 'Added Shortcut'
-      serverAPI.toaster.toast(toastData)
+      showModal(<ShortcutOptionsModal appID={shortcutAdded.success} appName={appName} serverAPI={serverAPI} />)
     } else {
-      toastData.title = 'Failed to add Shortcut'
-      toastData.sound = 4
+      let toastData: ToastData = {
+        title: 'Failed to add Shortcut',
+        body: file,
+        sound: 4,
+        playSound: true,
+        showToast: true
+      }
       serverAPI.toaster.toast(toastData)
     }
   }
