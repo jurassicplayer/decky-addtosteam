@@ -7,9 +7,9 @@ A simple plugin to add Steam shortcuts to files from GameMode.
 This plugin provides a simple file-picker to select any file and add a Steam shortcut directly to the file. Currently it doesn't do anything special beyond that.
 
 ## Installation
-#### Decky-Loader Store
-1. [Install decky-loader](https://github.com/SteamDeckHomebrew/decky-loader#installation)
-2. Use the built in plugin store to download the Add to Steam plugin
+~~#### Decky-Loader Store~~
+~~1. [Install decky-loader](https://github.com/SteamDeckHomebrew/decky-loader#installation)~~
+~~2. Use the built in plugin store to download the Add to Steam plugin~~
 #### Manual Installation
 1. Start the deck in Gaming Mode
 2. Open Decky-Loader in the QAM
