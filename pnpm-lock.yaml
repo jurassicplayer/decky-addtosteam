@@ -32,8 +32,8 @@ devDependencies:
     specifier: ^5.28.2
     version: 5.28.2
   decky-frontend-lib:
-    specifier: ^3.23.0
-    version: 3.23.0
+    specifier: ^3.25.0
+    version: 3.25.0
   rollup:
     specifier: ^2.79.1
     version: 2.79.1
@@ -430,8 +430,8 @@ packages:
     resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==}
     dev: true
 
-  /decky-frontend-lib@3.23.0:
-    resolution: {integrity: sha512-Sz/+glyEVOQ9wZpgRntlNiCs2W/GDDY235rkeWiupqF8vcKkSegDMeICrsfG1BKBwP1jlN0+E3EOH1YSh1aYUQ==}
+  /decky-frontend-lib@3.25.0:
+    resolution: {integrity: sha512-2lBoHS2AIRmuluq/bGdHBz+uyToQE7k3K/vDq1MQbDZ4eC+8CGDuh2T8yZOj3D0yjGP2MdikNNAWPA9Z5l2qDg==}
     dev: true
 
   /deepmerge@4.3.1:
