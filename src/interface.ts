@@ -1,9 +1,9 @@
-export interface SteamAppDetails {
-  strDisplayName:string,
-  strLaunchOptions: string,
-  strManualURL:string,
-  strShortcutExe:string,
-  strShortcutLaunchOptions:string,
-  strShortcutStartDir:string,
-  unAppID:number,
+export interface AppDetails {
+  strDisplayName: string
+  strShortcutExe: string
+  unAppID: number
+}
+
+export interface SteamSettings {
+  strCompatTool: string;
 }
