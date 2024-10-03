@@ -14,7 +14,7 @@ This plugin provides a simple file-picker to select any file and add a Steam sho
 6. Go to the `Developer` settings
 7. Go to the `Install Plugin from URL` URL option
 8. Press A to bring up the virtual keyboard, or use your own keyboard to add the following url:
-   - `https://github.com/jurassicplayer/decky-addtosteam/releases/latest/download/decky-addtosteam.zip`
+   - `https://github.com/jurassicplayer/decky-addtosteam/releases/latest/download/Add.to.Steam.zip`
 9. Press `Install` and `Confirm`
 
 ## Usage
