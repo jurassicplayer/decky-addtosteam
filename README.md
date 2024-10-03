@@ -1,4 +1,3 @@
-![Decky store](https://img.shields.io/badge/dynamic/json?color=blue&label=release&query=%24[%3F(%40.name%3D%3D%27Add%20to%20Steam%27)].versions[0].name&url=https%3A%2F%2Fplugins.deckbrew.xyz%2Fplugins)
 ## Decky-AddToSteam Plugin
 A simple plugin to add Steam shortcuts to files from GameMode.
 ![Main View](./assets/thumbnail.png)
@@ -6,10 +5,6 @@ A simple plugin to add Steam shortcuts to files from GameMode.
 ## Overview
 This plugin provides a simple file-picker to select any file and add a Steam shortcut directly to the file. Currently it doesn't do anything special beyond that.
 
-## Installation
-~~#### Decky-Loader Store~~
-~~1. [Install decky-loader](https://github.com/SteamDeckHomebrew/decky-loader#installation)~~
-~~2. Use the built in plugin store to download the Add to Steam plugin~~
 #### Manual Installation
 1. Start the deck in Gaming Mode
 2. Open Decky-Loader in the QAM
@@ -48,11 +43,10 @@ This plugin provides a simple file-picker to select any file and add a Steam sho
 - Upload the file/screenshots to a new/relevant [Github issue](https://github.com/jurassicplayer/decky-addtosteam/issues)
 
 ## Notes
-- While far more asthetically pleasing, I currently don't have any ideas on how to inject a shortcut into SteamOS that can be used to bring up the file picker externally.
+- While far more aesthetically pleasing, I currently don't have any ideas on how to inject a shortcut into SteamOS that can be used to bring up the file picker externally.
 
 ## Future Plans
-- Maybe come up with a better way to open the file picker prompt
-- If there is a way to set
+- Maybe come up with a better way to open the file picker prompt that isn't the QAM
 - Bugfixes
 
 ## Thanks
