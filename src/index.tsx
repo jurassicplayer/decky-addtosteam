@@ -15,13 +15,21 @@ import {
 import { call, FileSelectionType, openFilePicker, ToastData, toaster } from "@decky/api"
 import { useEffect, useState } from "react"
 import { MdSwitchAccessShortcutAdd } from "react-icons/md"
-import { SteamAppDetails } from "./interface"
+import { AppDetails, SteamSettings } from "./interface"
 
-async function getAppDetails(appID:number): Promise<SteamAppDetails|null> {
+async function getAppDetails(appID:number): Promise<AppDetails|null> {
   return new Promise((resolve) => {
-    let { unregister } = SteamClient.Apps.RegisterForAppDetails(appID, (details:SteamAppDetails) => {
+    let { unregister } = SteamClient.Apps.RegisterForAppDetails(appID, (details:AppDetails) => {
       unregister()
       resolve(details.unAppID === undefined ? null : details)
+    })
+  })
+}
+async function getPreferredCompatTool(): Promise<string|null> {
+  return new Promise((resolve) => {
+    let { unregister } = SteamClient.Settings.RegisterForSettingsChanges((settings:SteamSettings) => {
+      unregister()
+      resolve(settings.strCompatTool === undefined ? null : settings.strCompatTool)
     })
   })
 }
@@ -65,7 +73,10 @@ const ShortcutOptionsModal = (props: {closeModal?: CallableFunction, appID: numb
         let filepath = data.appDetails.strDisplayName.split('.')
         let fileext = filepath.pop()?.toLowerCase()
         if (fileext && ['exe', 'bat', 'ps1'].includes(fileext) && data.compatTools.length > 1) {
-          setCompatTool(data.compatTools[1])
+          getPreferredCompatTool().then((preferredCompatTool) => {
+            let compatTool = data.compatTools.find(tool => tool.data == preferredCompatTool)
+            if (compatTool) setCompatTool(compatTool)
+          })
         }
       }
     })
@@ -193,7 +204,6 @@ export default definePlugin(() => {
     title: <div className={staticClasses.Title}>Add to Steam</div>,
     content: <Content />,
     icon: <MdSwitchAccessShortcutAdd />,
-    onDismount() {
-    },
+    onDismount() {},
   }
 })
