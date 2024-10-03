@@ -1,21 +1,19 @@
 import {
   ButtonItem,
   definePlugin,
-  FileSelectionType,
   Navigation,
   PanelSection,
   PanelSectionRow,
-  ServerAPI,
   showModal,
   ConfirmModal,
   staticClasses,
-  ToastData,
   TextField,
   DropdownItem,
   SingleDropdownOption,
   
-} from "decky-frontend-lib"
-import { useEffect, useState, VFC } from "react"
+} from "@decky/ui"
+import { call, FileSelectionType, openFilePicker, ToastData, toaster } from "@decky/api"
+import { useEffect, useState } from "react"
 import { MdSwitchAccessShortcutAdd } from "react-icons/md"
 import { SteamAppDetails } from "./interface"
 
@@ -43,8 +41,8 @@ async function addShortcut(appName: string, execPath: string): Promise<{failed: 
   })
 }
 
-const ShortcutOptionsModal = (props: {closeModal?: CallableFunction, appID: number, appName: string, serverAPI: ServerAPI}) => {
-  const { appID, serverAPI } = props
+const ShortcutOptionsModal = (props: {closeModal?: CallableFunction, appID: number, appName: string}) => {
+  const { appID } = props
   let createShortcut = false
   const [shortcutName, setShortcutName] = useState<string>(props.appName)
   const [compatTools, setCompatTools] = useState<{data: string, label: string}[]>([])
@@ -87,7 +85,7 @@ const ShortcutOptionsModal = (props: {closeModal?: CallableFunction, appID: numb
       playSound: true,
       showToast: true
     }
-    serverAPI.toaster.toast(toastData)
+    toaster.toast(toastData)
   }
   return (
     <ConfirmModal
@@ -111,21 +109,20 @@ const ShortcutOptionsModal = (props: {closeModal?: CallableFunction, appID: numb
   )
 }
 
-const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
+const Content = () => {
   const [lastUsedPath, setLastUsedPath] = useState<string>('')
   useEffect(()=>{
     onInit()
   },[])
   const onInit = async () => {
     let lastUsedPath = localStorage.getItem('decky-addtosteam')
-    let deckyUserHome = (await serverAPI.callPluginMethod('getDeckyUserHome', {})).result
+    let deckyUserHome = (await call<any, string>('getDeckyUserHome'))
     let path = lastUsedPath || deckyUserHome
-    // @ts-ignore
     setLastUsedPath(path)
   }
   const onClick = async () => {
     Navigation.CloseSideMenus()
-    let filepath = await serverAPI.openFilePickerV2(
+    let filepath = await openFilePicker(
       FileSelectionType.FILE,
       lastUsedPath,
       true,
@@ -164,7 +161,7 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
     shortcutsFailed.forEach((appID) => { SteamClient.Apps.RemoveShortcut(appID) })
     console.log(`Add shortcut result (attempts ${attempts}): `, shortcutAdded.success)
     if (shortcutAdded.success) {
-      showModal(<ShortcutOptionsModal appID={shortcutAdded.success} appName={appName} serverAPI={serverAPI} />)
+      showModal(<ShortcutOptionsModal appID={shortcutAdded.success} appName={appName} />)
     } else {
       let toastData: ToastData = {
         title: 'Failed to add Shortcut',
@@ -173,7 +170,7 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
         playSound: true,
         showToast: true
       }
-      serverAPI.toaster.toast(toastData)
+      toaster.toast(toastData)
     }
   }
 
@@ -191,10 +188,10 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
   )
 }
 
-export default definePlugin((serverApi: ServerAPI) => {
+export default definePlugin(() => {
   return {
     title: <div className={staticClasses.Title}>Add to Steam</div>,
-    content: <Content serverAPI={serverApi} />,
+    content: <Content />,
     icon: <MdSwitchAccessShortcutAdd />,
     onDismount() {
     },

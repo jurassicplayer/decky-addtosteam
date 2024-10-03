@@ -1,6 +1,6 @@
 import os
-import decky_plugin
+import decky
 
 class Plugin:
     async def getDeckyUserHome(self):
-        return decky_plugin.DECKY_USER_HOME
+        return decky.DECKY_USER_HOME
