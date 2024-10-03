@@ -26,6 +26,7 @@ This plugin provides a simple file-picker to select any file and add a Steam sho
 - Upon selecting a file, the Add to Steam plugin will attempt to add a steam shortcut up to 5 times before giving up on a single file selection.
    - This is a workaround for SteamOS internal AddShortcut function which seems to be inconsistent at adding shortcuts correctly.
 - Any invalid shortcut attempts will be removed before notifying the user of the end result.
+- Will automatically select the user's preferred compatibility tool (proton version) when adding a .bat, .exe, or .ps1 file.
 
 ## Ran Into an Issue?
 - In order to properly assess what could potentially be happening, you must be able to reproduce the issue or provide steps for me to attempt reproducing the issue. In the event that you are able to repeatedly reproduce the issue, please follow the following steps and submit the logs so I can fix it for you :D (that's the hope anyways).
