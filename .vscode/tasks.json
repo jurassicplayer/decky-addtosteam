@@ -67,16 +67,6 @@
             // },
             "problemMatcher": []
         },
-        {
-            "label": "rename-zip-output",
-            "group": "build",
-            "type": "shell",
-            "detail": "Rename output zip to match pluginname setting",
-            "linux": {
-                "command": "sudo mv \"${workspaceFolder}/out/${config:pluginbuildname}.zip\" \"${workspaceFolder}/out/${config:pluginname}.zip\"",
-            },
-            "problemMatcher": []
-        },
         //"All-in-one" build task
         {
             "label": "build",
@@ -87,7 +77,6 @@
                 "setup",
                 "settingscheck",
                 "cli-build",
-                "rename-zip-output",
             ],
             "problemMatcher": []
         },
